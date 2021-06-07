@@ -3,24 +3,7 @@ xiaohe shuangpin db file for [ZSaberLv0/ZFVimIM](https://github.com/ZSaberLv0/ZF
 
 ## configs
 
-* cloud input
-
-    ```
-    let g:ZFVimIM_openfly_gitUserEmail='YourEmail'
-    let g:ZFVimIM_openfly_gitUserName='YourUserName'
-    let g:ZFVimIM_openfly_gitUserToken='YourGithubAccessToken'
-    ```
-
-    or
-
-    ```
-    let g:zf_git_user_email='YourEmail'
-    let g:zf_git_user_name='YourUserName'
-    let g:zf_git_user_token='YourGithubAccessToken'
-    ```
-
-    once configured, any changes would be pushed with the specified git user info
-    (make sure you have push permission)
+This db file only uses local file. It does't require extra config.
 
 ## add your own db
 

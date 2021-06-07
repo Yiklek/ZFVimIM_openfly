@@ -3,7 +3,6 @@ function! s:dbInit()
     let name = 'openfly'
     let repoPath = s:repoPath
     let dbFile = '/misc/'.name.'.txt'
-    let dbCountFile = '/misc/'.name.'_count.txt'
 
     let db = ZFVimIM_dbInit({
                 \   'name' : name,
