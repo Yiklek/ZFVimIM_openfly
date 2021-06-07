@@ -9,12 +9,9 @@ function! s:dbInit()
                 \   'name' : name,
                 \ })
     call ZFVimIM_cloudRegister({
+                \   'mode':'local',
                 \   'repoPath' : repoPath,
                 \   'dbFile' : dbFile,
-                \   'dbCountFile' : dbCountFile,
-                \   'gitUserEmail' : get(g:, 'ZFVimIM_'.name.'_gitUserEmail', get(g:, 'zf_git_user_email', '')),
-                \   'gitUserName' : get(g:, 'ZFVimIM_'.name.'_gitUserName', get(g:, 'zf_git_user_name', '')),
-                \   'gitUserToken' : get(g:, 'ZFVimIM_'.name.'_gitUserToken', get(g:, 'zf_git_user_token', '')),
                 \   'dbId' : db['dbId'],
                 \ })
 endfunction
