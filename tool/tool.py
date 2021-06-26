@@ -42,7 +42,7 @@ def openfly(in_path, out_path):
         output.write("{} {}\n".format(k, " ".join(all_word_dict[k])))
     output.close()
     print("{} records converted. write to {}".format(
-        len(all_word_dict)), out_path)
+        len(all_word_dict), out_path))
 
 
 def build(parser, args):
