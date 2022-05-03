@@ -39,7 +39,7 @@ def load_rime_dict(path, code2word=None, word2code=None):
                     word2code[word] = sorted(word2code[word], key=lambda l: len(l))
 
     except Exception as e:
-        print("load table {} ocurred error skip.{}".format(path, e), 
+        print("load table {} ocurred error skip.{}".format(path, e),
                 file=sys.stderr)
     finally:
         if f is not None and not f.closed:
@@ -72,7 +72,7 @@ def load_zf(path, code2word=None, word2code=None):
                         word2code[word] = sorted(word2code[word], key=lambda l: len(l))
 
     except Exception as e:
-        print("load table {} ocurred error skip.{}".format(path, e), 
+        print("load table {} ocurred error skip.{}".format(path, e),
                 file=sys.stderr)
     finally:
         if f is not None and not f.closed:
@@ -122,7 +122,7 @@ def convert(parser, args):
     result = None
     if getattr(args, 'from') == 'rime' and getattr(args, 'to') == 'zf':
         result = rime2zf(args.input)
-    
+
     if result is not None:
         output(result, args.output, args.outstd)
 
@@ -162,15 +162,15 @@ def fix_openfly_code(word2code):
     for k,v in w2c.items():
         word2code[k].insert(0, v)
 
-def openfly_extra(base, source):
+def openfly(base, source, extra=False):
     base = urlparse(base)
     source = urlparse(source)
     if base.scheme not in ['rime', 'zf']:
         print("base scheme not support.", file=sys.stderr)
-        return 
+        return
     if source.scheme not in ['rime', 'zf']:
         print("source scheme not support.", file=sys.stderr)
-        return 
+        return
 
     base_loader = None
     if base.scheme == 'rime':
@@ -225,7 +225,12 @@ def openfly_extra(base, source):
             elif len(word) == 3:
                 code = w2c(word[0])[0:1] + w2c(word[1])[0:1] + w2c(word[2])[0:2]
             else:
-                code = w2c(word[0])[0:1] + w2c(word[1])[0:1] + w2c(word[2])[0:1] + w2c(word[-1])[0:1] 
+                code = w2c(word[0])[0:1] + w2c(word[1])[0:1] + w2c(word[2])[0:1] + w2c(word[-1])[0:1]
+                # extra code
+                if extra:
+                    code_extra = "".join([w2c(i)[0] for i in word])
+                    if code_extra != code:
+                        append(code_extra, word)
         except KeyError as e:
             print("no code for {}.".format(str(e)), file=sys.stderr)
             continue
@@ -242,8 +247,10 @@ def openfly_extra(base, source):
 def build(parser, args):
     result = None
     if getattr(args, 'target') == 'openfly_extra':
-        result = openfly_extra(args.base, args.input)
-    
+        result = openfly(args.base, args.input, True)
+    elif getattr(args, 'target') == 'openfly':
+        result = openfly(args.base, args.input, False)
+
     if result is not None:
         output(result, args.output, args.outstd)
 
@@ -272,11 +279,11 @@ def create_arg_parser():
     parser_build.set_defaults(func=build)
     parser_build.add_argument('target', metavar='TARGET', type=str, choices=['openfly_extra'],
                                 default='openfly_extra', help='target. options: openfly_extra. ')
-    parser_build.add_argument('base', metavar='BASE', type=str, action='store', 
+    parser_build.add_argument('base', metavar='BASE', type=str, action='store',
             help='base dict.support scheme: rime.\n example:rime://openfly.dict.yaml')
     parser_build.add_argument('input', metavar='INPUT', type=str,
                                 help='source dict. support scheme: rime.\n example:rime://openfly.dict.yaml')
-     
+
 
     parser_build.add_argument('-o', '--output', dest='output', type=str, default=None,
                                 action='store', help='output file')
