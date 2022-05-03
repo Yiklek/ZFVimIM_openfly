@@ -20,7 +20,7 @@ def load_rime_dict(path, code2word=None, word2code=None):
         word2code = dict()
 
     try:
-        f = open(path, 'r')
+        f = open(path, 'r', encoding="utf-8")
         file_content = f.read()
         file_split = file_content.split("...")
         _file_config = file_split[0]
@@ -103,12 +103,14 @@ def rime2zf(path):
 def output(out, out_path, outstd):
     out_file = None
     if out_path is not None:
-        out_file = open(out_path, 'w')
-    for k in out:
-        if out_file is not None:
-            out_file.write(k + '\n')
-        if outstd:
-            print(k, file=sys.stdout)
+        out_file = open(out_path, 'w', encoding="utf-8")
+    # 1 is stdout, use utf-8
+    with open(1, "w", encoding="utf-8") as stdout:
+        for k in out:
+            if out_file is not None:
+                out_file.write(k + '\n')
+            if outstd:
+                print(k, file=stdout, flush=True)
     if out_file is not None and not out_file.closed:
         out_file.close()
 
