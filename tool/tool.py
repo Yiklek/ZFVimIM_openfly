@@ -5,7 +5,7 @@ import re
 import sys
 from urllib.parse import urlparse
 from copy import deepcopy
-
+from functools import reduce
 
 line_pattern = re.compile(r"^(.*?)\s+(.*?)$")
 dup_pattern = re.compile(r"(.)\1{2,}")
@@ -130,34 +130,36 @@ def convert(parser, args):
 def fix_openfly_code(word2code):
     # 少量需要调整，暂时写在代码里
     w2c = {
-            '去':'qu',
-            '我':'wo',
-            '二':'er',
-            '人':'rf',
-            '他':'ta',
-            '一':'yi',
-            '是':'ui',
-            '出':'iu',
-            '哦':'oo',
-            '平':'pk',
-            '啊':'aa',
-            '三':'sj',
-            '的':'de',
-            '非':'fw',
-            '个':'ge',
-            '和':'he',
-            '就':'jq',
-            '可':'ke',
-            '了':'le',
-            '在':'zd',
-            '小':'xn',
-            '才':'cd',
-            '这':'ve',
-            '不':'bu',
-            '你':'ni',
-            '没':'mw',
-            '万':'wja',
+            '去':'quts',
+            '我':'wopd',
+            '二':'eraa',
+            '人':'rfpn',
+            '他':'tary',
+            '一':'yiaa',
+            '是':'uior',
+            '出':'iuvk',
+            '哦':'ookw',
+            '平':'pkau',
+            '啊':'aakk',
+            '三':'sjae',
+            '的':'debu',
+            '的':'debu',
+            '非':'fwla',
+            '个':'gerl',
+            '和':'hehk',
+            '就':'jqwy',
+            '可':'kedk',
+            '了':'levl',
+            '在':'zdut',
+            '小':'xnld',
+            '才':'cdap',
+            '这':'vezw',
+            '不':'buad',
+            '你':'nirx',
+            '没':'mwdy',
+            '万':'wjap',
             '识':'uiyb',
+            '叶':'yeku',
             }
     for k,v in w2c.items():
         word2code[k].insert(0, v)
@@ -239,7 +241,8 @@ def openfly(base, source, extra=False):
 
     sorted_c2w_val = sorted(result_c2w.values(), key=lambda l: len(l), reverse=True)
     sorted_w2c_val = sorted(result_w2c.values(), key=lambda l: len(l), reverse=True)
-    print("code max duplication: {} {}".format(len(sorted_c2w_val[0]), sorted_c2w_val[0]), file=sys.stderr)
+    sum_code_dup = reduce(lambda x, y: x + len(y), sorted_c2w_val, 0)
+    print("code max duplication: {} {} \nave: {}".format(len(sorted_c2w_val[0]), sorted_c2w_val[0], sum_code_dup/len(sorted_c2w_val)), file=sys.stderr)
     print("word max duplication: {} {}".format(len(sorted_w2c_val[0]), sorted_w2c_val[0]), file=sys.stderr)
 
     return result
@@ -260,7 +263,7 @@ def create_arg_parser():
     subparsers = parser.add_subparsers(metavar="COMMAND", dest='command')
     # convert
     parser_convert = subparsers.add_parser(
-        'convert', aliases=['conv'], help='convert dict file')
+        'convert', aliases=['conv'], help='convert format of dict file')
     parser_convert.set_defaults(func=convert)
     parser_convert.add_argument('from', metavar='FROM', type=str, choices=['rime'],
                                 default='rime', help='from format. options: rime. ')
@@ -275,14 +278,15 @@ def create_arg_parser():
                                action='store_true', help='output stdout')
     # build
     parser_build = subparsers.add_parser(
-        'build', aliases=['b'], help='b dict file')
+        'build', aliases=['b'], help='build target dict based on the specified dict code')
     parser_build.set_defaults(func=build)
-    parser_build.add_argument('target', metavar='TARGET', type=str, choices=['openfly_extra'],
-                                default='openfly_extra', help='target. options: openfly_extra. ')
+    build_target = ['openfly', 'openfly_extra']
+    parser_build.add_argument('target', metavar='TARGET', type=str, choices=build_target,
+                                default='openfly_extra', help='target. options: {} '.format(", ".join(build_target)))
     parser_build.add_argument('base', metavar='BASE', type=str, action='store',
-            help='base dict.support scheme: rime.\n example:rime://openfly.dict.yaml')
+            help='base dict. support scheme: rime. example: rime://openfly.dict.yaml')
     parser_build.add_argument('input', metavar='INPUT', type=str,
-                                help='source dict. support scheme: rime.\n example:rime://openfly.dict.yaml')
+                                help='source dict. support scheme: rime.\n example: rime://meogirl.dict.yaml')
 
 
     parser_build.add_argument('-o', '--output', dest='output', type=str, default=None,
